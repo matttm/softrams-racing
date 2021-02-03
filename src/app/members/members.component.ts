@@ -17,7 +17,11 @@ export class MembersComponent implements OnInit {
   }
 
   goToAddMemberForm() {
-    console.log(`Hmmm...we didn't navigate anywhere`);
+    this.router.navigateByUrl('add-member').then(() => {
+      console.log(`Navigating to member addition page`);
+    }).catch(err => {
+      console.log(err);
+    });
   }
 
   editMemberByID(id: number) {}
