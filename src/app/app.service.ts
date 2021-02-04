@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,11 @@ export class AppService {
     this.username = name;
   }
 
-  addMember(memberForm) {}
+  addMember(memberForm): Observable<any> {
+    return this.http
+        .post<any>(`${this.api}/members`, memberForm, {observe: 'response'})
+        .pipe(catchError(this.handleError));
+  }
 
   getTeams() {}
 
