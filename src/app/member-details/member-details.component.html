@@ -40,7 +40,7 @@
         </div>
         <!--We may have to make a service call to get this list-->
         <select id="team" formControlName="team" class="col-md-6 custom-select" required="true">
-          <option *ngFor="let team of $teams | async" [value]="team">{{ team.teamName }}</option>
+          <option *ngFor="let team of teams$ | async" [value]="team.teamName">{{ team.teamName }}</option>
         </select>
       </div>
       <br />

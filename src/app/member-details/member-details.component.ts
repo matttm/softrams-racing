@@ -26,14 +26,14 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
   submitted = false;
   alertType: String;
   alertMessage: String;
-  $teams: Observable<any>;
-  $unsub: Subject<any>;
+  teams$: Observable<any>;
+  unsub$: Subject<any>;
 
   constructor(private fb: FormBuilder, private appService: AppService, private router: Router) {}
 
   ngOnInit() {
-    this.$teams = this.appService.getTeams();
-    this.$unsub = new Subject<any>();
+    this.teams$ = this.appService.getTeams();
+    this.unsub$ = new Subject<any>();
     this.memberForm = this.fb.group({
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
@@ -51,7 +51,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
     this.appService.addMember(this.memberModel)
         .pipe(
             // not unsubscribing may cause mem leaks
-            takeUntil(this.$unsub)
+            takeUntil(this.unsub$)
         )
         .subscribe((res: HttpResponse<any>) => {
           if (res.status === 200) {
@@ -67,7 +67,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.$unsub.next();
-    this.$unsub.complete();
+    this.unsub$.next();
+    this.unsub$.complete();
   }
 }

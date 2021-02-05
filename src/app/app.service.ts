@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
+import {catchError, filter} from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import {Observable} from 'rxjs';
 
@@ -33,7 +33,10 @@ export class AppService {
   getTeams(): Observable<any> {
     return this.http
         .get(`${this.api}/teams`)
-        .pipe(catchError(this.handleError));
+        .pipe(
+            catchError(this.handleError),
+            // TODO: Only with the appropriate shape
+        );
   }
 
   private handleError(error: HttpErrorResponse) {
