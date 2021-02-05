@@ -45,12 +45,32 @@ app.get('/api/members', (req, res) => {
 
 // TODO: Dropdown!
 app.get('/api/teams', (req, res) => {
-
+    request.get('http://localhost:3000/teams', (err, response, body) => {
+        if (response.statusCode <= 500) {
+            res.status(200).send(body);
+        }
+    });
 });
 
 // Submit Form!
-app.post('/api/addMember', (req, res) => {
-
+// I switched this endpoint from 'addMember' to 'members', for
+// doing so follows a more RESTful practice of the 'members' resource
+app.post('/api/members', (req, res) => {
+    console.log(`POST to members was ${JSON.stringify(req.body)}`);
+    const member = req.body;
+    // Ensure the object has proper keys
+    if (member.firstName && member.lastName && member.jobTitle && member.team && member.status) {
+        request.post({
+            url: 'http://localhost:3000/members',
+            json: member
+        }, (err, response, body) => {
+            if (response.statusCode <= 500) {
+                res.status(201).send(body);
+            }
+        });
+    } else {
+        res.status(400).send(`Object does not have all member fields`);
+    }
 });
 
 app.get('*', (req, res) => {

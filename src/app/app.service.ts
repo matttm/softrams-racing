@@ -24,13 +24,17 @@ export class AppService {
     this.username = name;
   }
 
-  addMember(memberForm): Observable<any> {
+  addMember(member): Observable<any> {
     return this.http
-        .post<any>(`${this.api}/members`, memberForm, {observe: 'response'})
+        .post<any>(`${this.api}/members`, member, {observe: 'response', responseType: 'json'})
         .pipe(catchError(this.handleError));
   }
 
-  getTeams() {}
+  getTeams(): Observable<any> {
+    return this.http
+        .get(`${this.api}/teams`)
+        .pipe(catchError(this.handleError));
+  }
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

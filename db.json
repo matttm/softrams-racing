@@ -23,6 +23,14 @@
       "jobTitle": "Reserve Driver",
       "team": "Formula 1 - Car 77",
       "status": "Inactive"
+    },
+    {
+      "firstName": "Matt",
+      "lastName": "Maloney",
+      "jobTitle": "Drift King",
+      "team": "[object Object]",
+      "status": "Active",
+      "id": 4
     }
   ],
   "teams": [
