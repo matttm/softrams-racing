@@ -32,6 +32,10 @@ const ROUTES = [
   {
     path: 'add-member',
     component: MemberDetailsComponent
+  },
+  {
+    path: 'edit-member',
+    component: MemberDetailsComponent
   }
 ];
 

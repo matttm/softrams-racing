@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import {catchError, filter} from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {Member} from './member-details/member-details.component';
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +21,23 @@ export class AppService {
       .pipe(catchError(this.handleError));
   }
 
+  getMemberById(id: number): Observable<Member> {
+      return this.http
+          .get(`${this.api}/members/${id}`)
+          .pipe(catchError(this.handleError));
+  }
+
+  setMemberById(id: number, member: Member): Observable<any> {
+    return this.http
+        .put(`${this.api}/members/${id}`, member, {observe: 'response', responseType: 'json'})
+        .pipe(catchError(this.handleError));
+  }
+
   setUsername(name: string): void {
     this.username = name;
   }
 
-  addMember(member): Observable<any> {
+  addMember(member: Member): Observable<any> {
     return this.http
         .post<any>(`${this.api}/members`, member, {observe: 'response', responseType: 'json'})
         .pipe(catchError(this.handleError));
@@ -35,7 +48,7 @@ export class AppService {
         .get(`${this.api}/teams`)
         .pipe(
             catchError(this.handleError),
-            // TODO: Only with the appropriate shape
+            // TODO: filter for only the appropriate shape
         );
   }
 

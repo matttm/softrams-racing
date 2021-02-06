@@ -35,6 +35,16 @@ app.use(
   })
 );
 
+app.get('/api/members/:id', (req, res) => {
+    const id = req.params.id;
+    // TODO: validate id
+    request(`http://localhost:3000/members/${id}`, (err, response, body) => {
+        if (response.statusCode <= 500) {
+            res.status(200).send(body);
+        }
+    });
+});
+
 app.get('/api/members', (req, res) => {
   request('http://localhost:3000/members', (err, response, body) => {
     if (response.statusCode <= 500) {

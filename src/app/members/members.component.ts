@@ -24,7 +24,15 @@ export class MembersComponent implements OnInit {
     });
   }
 
-  editMemberByID(id: number) {}
+  editMemberByID(id: number) {
+    this.router.navigateByUrl(`edit-member?id=${id}`).then(() => {
+      console.log('Navigating to member edit page');
+    }).catch(err => {
+      console.log(err);
+    });
+  }
 
-  deleteMemberById(id: number) {}
+  deleteMemberById(id: number) {
+    // this.appService.deleteMemberById(id);
+  }
 }

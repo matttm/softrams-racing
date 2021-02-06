@@ -1,13 +1,13 @@
 import {Component, OnInit, OnChanges, OnDestroy} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppService } from '../app.service';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {first, takeUntil} from 'rxjs/operators';
 import {HttpResponse} from '@angular/common/http';
 import {Observable, Subject} from 'rxjs';
 
 // This interface may be useful in the times ahead...
-interface Member {
+export interface Member {
   firstName: string;
   lastName: string;
   jobTitle: string;
@@ -26,20 +26,44 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
   submitted = false;
   alertType: String;
   alertMessage: String;
-  teams$: Observable<any>;
+  teams = [];
   unsub$: Subject<any>;
 
-  constructor(private fb: FormBuilder, private appService: AppService, private router: Router) {}
-
-  ngOnInit() {
-    this.teams$ = this.appService.getTeams();
+  constructor(
+      private fb: FormBuilder,
+      private appService: AppService,
+      private router: Router,
+      private route: ActivatedRoute
+  ) {
     this.unsub$ = new Subject<any>();
+    this.appService.getTeams().pipe(takeUntil(this.unsub$)).subscribe(teams => {
+      this.teams = teams;
+    });
     this.memberForm = this.fb.group({
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       jobTitle: ['', [Validators.required]],
-      team: ['', [Validators.required]],
-      status: ['', [Validators.required]]
+      team: [null, [Validators.required]],
+      status: [null, [Validators.required]]
+    });
+  }
+
+  ngOnInit() {
+    // Checking whether, this component is currently meant for an edit
+    this.route.queryParams.pipe(takeUntil(this.unsub$)).subscribe(params => {
+      const memberId = params['id'];
+      // if the id is defined as a query param, we're editing a member
+      if (memberId) {
+        this.appService.getMemberById(memberId).pipe(takeUntil(this.unsub$)).subscribe((member: Member) => {
+          console.log(`Member retrieved for edit: ${JSON.stringify(member)}`);
+          const controls = this.memberForm.controls;
+          controls['firstName'].setValue(member.firstName);
+          controls['lastName'].setValue(member.lastName);
+          controls['jobTitle'].setValue(member.jobTitle);
+          controls['team'].patchValue(member.team);
+          controls['status'].setValue(member.status);
+        });
+      }
     });
   }
 
@@ -64,6 +88,10 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
                 console.log('Navigating to members page');
               });
         });
+  }
+
+  compareTeams(t1: any, t2: any): boolean {
+    return t1 && t2 ? t1.teamName === t2.teamName : false;
   }
 
   ngOnDestroy(): void {
