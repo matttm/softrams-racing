@@ -27,9 +27,15 @@ export class AppService {
           .pipe(catchError(this.handleError));
   }
 
-  setMemberById(id: number, member: Member): Observable<any> {
+  updateMember(id: number, member: Member): Observable<any> {
     return this.http
         .put(`${this.api}/members/${id}`, member, {observe: 'response', responseType: 'json'})
+        .pipe(catchError(this.handleError));
+  }
+
+  deleteMember(id: number): Observable<any> {
+    return this.http
+        .delete(`${this.api}/members/${id}`)
         .pipe(catchError(this.handleError));
   }
 

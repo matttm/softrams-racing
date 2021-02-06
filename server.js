@@ -35,10 +35,31 @@ app.use(
   })
 );
 
+app.delete('/api/members/:id', (req, res) => {
+    const id = req.params.id;
+    // TODO: validate id
+    request.delete(`http://localhost:3000/members/${id}`, (err, response, body) => {
+        if (response.statusCode <= 500) {
+            res.status(200).send(body);
+        }
+    });
+});
+
+app.put('/api/members/:id', (req, res) => {
+    const id = req.params.id;
+    // TODO: validate id
+    const member = req.body;
+    request.put(`http://localhost:3000/members/${id}`, member, (err, response, body) => {
+        if (response.statusCode <= 500) {
+            res.status(200).send(body);
+        }
+    });
+});
+
 app.get('/api/members/:id', (req, res) => {
     const id = req.params.id;
     // TODO: validate id
-    request(`http://localhost:3000/members/${id}`, (err, response, body) => {
+    request.get(`http://localhost:3000/members/${id}`, (err, response, body) => {
         if (response.statusCode <= 500) {
             res.status(200).send(body);
         }
