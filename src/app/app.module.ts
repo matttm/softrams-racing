@@ -16,7 +16,7 @@ import { LoginComponent } from './login/login.component';
 import {AuthGuard} from './auth.guard';
 
 // We may be missing a route...
-const ROUTES: Route[] = [
+export const ROUTES: Route[] = [
   {
     path: '',
     redirectTo: 'login',
