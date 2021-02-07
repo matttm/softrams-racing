@@ -21,7 +21,8 @@
         <td>{{member?.team}}</td>
         <td>{{member?.status}}</td>
         <td>
-          <span (click)="editMemberByID(member?.id)">Edit</span> | <span (click)="deleteMemberById(member?.id)">Delete</span>
+          <span id="editMemberButton" (click)="editMemberByID(member?.id)">Edit</span> | <!-- there is a space on each side of '!' -->
+          <span id="deleteMemberButton" (click)="deleteMemberById(member?.id)">Delete</span>
         </td>
       </tr>
     </tbody>

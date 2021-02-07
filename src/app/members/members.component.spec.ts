@@ -1,14 +1,24 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { MembersComponent } from './members.component';
+import {MembersComponent} from './members.component';
 
-import { Router } from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 
-import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import {HttpClientModule} from '@angular/common/http';
 import {AppService} from '../app.service';
 import {mockAppService} from '../test-utilities.spec';
 import {of} from 'rxjs';
+
+const mockMembers = [
+  {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    jobTitle: 'Driver',
+    team: 'Formula 1 - Car 77',
+    status: 'Active'
+  }
+];
 
 describe('MembersComponent', () => {
   let component: MembersComponent;
@@ -64,4 +74,38 @@ describe('MembersComponent', () => {
     button.click();
     expect(component.goToAddMemberForm).toHaveBeenCalled();
   });
+
+  it('should invoke editMember on component on button click', (done) => {
+    spyOn(service, 'getMembers').and.returnValue(of(mockMembers));
+    spyOn(component, 'editMemberByID');
+    component.ngOnInit();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      clickButton('#editMemberButton');
+      expect(component.editMemberByID).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should invoke deleteMember on service on button click', (done) => {
+    spyOn(service, 'getMembers').and.returnValue(of(mockMembers));
+    spyOn(service, 'deleteMember');
+    component.ngOnInit();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      clickButton('#deleteMemberButton');
+      expect(service.deleteMember).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  function clickButton(selector: string) {
+    // ensure there are members
+    expect(component.members.length).toBeGreaterThan(0);
+    const el: HTMLElement = fixture.debugElement.nativeElement;
+    const button: HTMLElement = el.querySelector(selector);
+    expect(button).toBeTruthy();
+    button.click();
+  }
 });
+
