@@ -49,7 +49,10 @@ app.put('/api/members/:id', (req, res) => {
     const id = req.params.id;
     // TODO: validate id
     const member = req.body;
-    request.put(`http://localhost:3000/members/${id}`, member, (err, response, body) => {
+    request.put({
+        url: `http://localhost:3000/members/${id}`,
+        json: member
+    }, (err, response, body) => {
         if (response.statusCode <= 500) {
             res.status(200).send(body);
         }

@@ -28,6 +28,8 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
   alertMessage: String;
   teams = [];
   unsub$: Subject<any>;
+  // store id query param, so we only have to fetch it once
+  editingId = null;
 
   constructor(
       private fb: FormBuilder,
@@ -54,6 +56,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
       const memberId = params['id'];
       // if the id is defined as a query param, we're editing a member
       if (memberId) {
+        this.editingId = memberId;
         this.appService.getMemberById(memberId).pipe(takeUntil(this.unsub$)).subscribe((member: Member) => {
           console.log(`Member retrieved for edit: ${JSON.stringify(member)}`);
           const controls = this.memberForm.controls;
@@ -69,33 +72,49 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges() {}
 
-  // TODO: Add member to members
+  ngOnDestroy(): void {
+    this.unsub$.next();
+    this.unsub$.complete();
+  }
+
   onSubmit() {
     this.memberModel = this.memberForm.value;
-    this.appService.addMember(this.memberModel)
-        .pipe(
-            // not unsubscribing may cause mem leaks
-            takeUntil(this.unsub$)
-        )
-        .subscribe((res: HttpResponse<any>) => {
-          if (res.status === 200) {
-            console.log('Member successfully added');
-          } else {
-            console.log('Member could not be added');
-          }
-          this.router.navigateByUrl('members')
-              .then(() => {
-                console.log('Navigating to members page');
-              });
+    // if we are updating a member
+    if (this.editingId) {
+      // update member
+      this.appService.updateMember(this.editingId, this.memberModel)
+          .pipe(takeUntil(this.unsub$))
+          .subscribe(res => {
+            if (res.status === 200) {
+              console.log('Member successfully edited');
+            } else {
+              console.log('Member could not be edited');
+            }
+            this.gotoMembersPage();
+          });
+    } else {
+      // add member
+      this.appService.addMember(this.memberModel)
+          .pipe(takeUntil(this.unsub$))
+          .subscribe(res => {
+            if (res.status === 201) {
+              console.log('Member successfully added');
+            } else {
+              console.log('Member could not be added');
+            }
+            this.gotoMembersPage();
+          });
+    }
+  }
+
+  gotoMembersPage(): void {
+    this.router.navigateByUrl('members')
+        .then(() => {
+          console.log('Navigating to members page');
         });
   }
 
   compareTeams(t1: any, t2: any): boolean {
     return t1 && t2 ? t1.teamName === t2.teamName : false;
-  }
-
-  ngOnDestroy(): void {
-    this.unsub$.next();
-    this.unsub$.complete();
   }
 }
