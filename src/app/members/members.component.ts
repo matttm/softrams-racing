@@ -49,7 +49,7 @@ export class MembersComponent implements OnInit, OnDestroy {
     });
   }
 
-  private updateLocalMembers() {
+  updateLocalMembers() {
     this.appService.getMembers().pipe(takeUntil(this.unsub$)).subscribe(members => {
       this.members = members;
       console.log(`Updated members`);

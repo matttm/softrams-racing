@@ -63,10 +63,4 @@ describe('AppService', () => {
     service.setUsername(username);
     expect(service.username).toBe(username);
   });
-
-  it('should indicate an error', function () {
-    spyOn(window.console, 'error');
-    const error = new HttpErrorResponse({status: 401});
-    expect(window.console.error).toHaveBeenCalled();
-  });
 });

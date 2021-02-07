@@ -4,13 +4,17 @@ import { MemberDetailsComponent } from './member-details.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import {Observable, of} from 'rxjs';
+import {AppService} from '../app.service';
+import {mockAppService} from '../test-utilities.spec';
 
+const mockActivatedRoute = { queryParams: of( [{id: 2}] )};
 // Bonus points!
 describe('MemberDetailsComponent', () => {
   let component: MemberDetailsComponent;
@@ -29,9 +33,17 @@ describe('MemberDetailsComponent', () => {
         HttpClient,
         FormBuilder,
         {
+          provide: ActivatedRoute,
+          useValue: mockActivatedRoute
+        },
+        {
+          provide: AppService,
+          useValue: mockAppService
+        },
+        {
           provide: Router,
           useClass: class {
-            navigate = jasmine.createSpy('navigate');
+            navigate = jasmine.createSpy('navigateByUrl');
           }
         }
       ]

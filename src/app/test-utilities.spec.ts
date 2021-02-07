@@ -2,6 +2,8 @@
  * Testing utilities
  */
 
+import {of} from 'rxjs';
+
 /**
  * Creates a mock store and spies on it
  */
@@ -30,3 +32,10 @@ export function establishLocalStorageSpies() {
     spyOn(localStorage, 'clear')
         .and.callFake(mockLocalStorage.clear);
 }
+
+export const mockAppService = {
+    getTeams: () => of( [] ),
+    getMembers: () => of( [] ),
+    deleteMember: () => of(),
+    getMemberById: (id) => of()
+};
