@@ -37,7 +37,9 @@ app.use(
 
 app.delete('/api/members/:id', (req, res) => {
     const id = req.params.id;
-    // TODO: validate id
+    if (!isWholeNumber(id)) {
+        res.status(400).send('id must be a whole number');
+    }
     request.delete(`http://localhost:3000/members/${id}`, (err, response, body) => {
         if (response.statusCode <= 500) {
             res.status(200).send(body);
@@ -47,21 +49,29 @@ app.delete('/api/members/:id', (req, res) => {
 
 app.put('/api/members/:id', (req, res) => {
     const id = req.params.id;
-    // TODO: validate id
+    if (!isWholeNumber(id)) {
+        res.status(400).send('id must be a whole number');
+    }
     const member = req.body;
-    request.put({
-        url: `http://localhost:3000/members/${id}`,
-        json: member
-    }, (err, response, body) => {
-        if (response.statusCode <= 500) {
-            res.status(200).send(body);
-        }
-    });
+    if (isValidMember(m)) {
+        request.put({
+            url: `http://localhost:3000/members/${id}`,
+            json: member
+        }, (err, response, body) => {
+            if (response.statusCode <= 500) {
+                res.status(200).send(body);
+            }
+        });
+    } else {
+        res.status(400).send(`Object does not have all member fields`);
+    }
 });
 
 app.get('/api/members/:id', (req, res) => {
     const id = req.params.id;
-    // TODO: validate id
+    if (!isWholeNumber(id)) {
+        res.status(400).send('id must be a whole number');
+    }
     request.get(`http://localhost:3000/members/${id}`, (err, response, body) => {
         if (response.statusCode <= 500) {
             res.status(200).send(body);
@@ -77,7 +87,6 @@ app.get('/api/members', (req, res) => {
   });
 });
 
-// TODO: Dropdown!
 app.get('/api/teams', (req, res) => {
     request.get('http://localhost:3000/teams', (err, response, body) => {
         if (response.statusCode <= 500) {
@@ -93,7 +102,7 @@ app.post('/api/members', (req, res) => {
     console.log(`POST to members was ${JSON.stringify(req.body)}`);
     const member = req.body;
     // Ensure the object has proper keys
-    if (member.firstName && member.lastName && member.jobTitle && member.team && member.status) {
+    if (isValidMember(m)) {
         request.post({
             url: 'http://localhost:3000/members',
             json: member
@@ -114,3 +123,11 @@ app.get('*', (req, res) => {
 app.listen('8000', () => {
   console.log('Vrrrum Vrrrum! Server starting!');
 });
+
+function isValidMember(m) {
+    return m.firstName && m.lastName && m.jobTitle && m.team && m.status;
+}
+
+function isWholeNumber(v) {
+    return v % 1 === 0;
+}
