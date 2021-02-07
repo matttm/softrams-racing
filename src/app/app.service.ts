@@ -28,7 +28,6 @@ export class AppService {
   }
 
   updateMember(id: number, member: Member): Observable<any> {
-    console.log(`Member to update: ${JSON.stringify(member)}`);
     return this.http
         .put(`${this.api}/members/${id}`, member, {observe: 'response', responseType: 'json'})
         .pipe(catchError(this.handleError));
