@@ -53,7 +53,7 @@ app.put('/api/members/:id', (req, res) => {
         res.status(400).send('id must be a whole number');
     }
     const member = req.body;
-    if (isValidMember(m)) {
+    if (isValidMember(member)) {
         request.put({
             url: `http://localhost:3000/members/${id}`,
             json: member
@@ -102,7 +102,7 @@ app.post('/api/members', (req, res) => {
     console.log(`POST to members was ${JSON.stringify(req.body)}`);
     const member = req.body;
     // Ensure the object has proper keys
-    if (isValidMember(m)) {
+    if (isValidMember(member)) {
         request.post({
             url: 'http://localhost:3000/members',
             json: member
