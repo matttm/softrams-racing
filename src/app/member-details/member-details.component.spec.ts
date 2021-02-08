@@ -1,13 +1,13 @@
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {MemberDetailsComponent} from './member-details.component';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 
-import {HttpClient, HttpResponse} from '@angular/common/http';
+import {HttpResponse} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {of, Subject} from 'rxjs';
 import {AppService} from '../app.service';
-import {establishActivatedRouteSpies, establishAppServiceSpies} from '../test-utilities.spec';
+import {establishAppServiceSpies} from '../test-utilities.spec';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 
@@ -121,18 +121,44 @@ describe('MemberDetailsComponent', () => {
   });
 
   it('should call updateMember from service when in edit mode', function () {
+    spyOn(console, 'log');
     // in edit mode if not null
     component.editingId = 1;
     spyOn(service, 'updateMember').and.returnValue(of(new HttpResponse({status: 200})));
     component.onSubmit();
     expect(service.updateMember).toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalledWith('Member successfully edited');
+  });
+
+  it('should call updateMember from service when in edit mode but receiving ' +
+      'unanticipated response code', function () {
+    spyOn(console, 'log');
+    // in edit mode if not null
+    component.editingId = 1;
+    spyOn(service, 'updateMember').and.returnValue(of(new HttpResponse({status: 201})));
+    component.onSubmit();
+    expect(service.updateMember).toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalledWith('Unexpected non-error response code');
   });
 
   it('should call addMember from service when not in edit mode', function () {
+    spyOn(console, 'log');
+    // in edit mode if not null
+    component.editingId = null;
+    spyOn(service, 'addMember').and.returnValue(of(new HttpResponse({status: 201})));
+    component.onSubmit();
+    expect(service.addMember).toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalledWith('Member successfully added');
+  });
+
+  it('should call addMember from service when not in edit mode but receiving ' +
+      'unanticipated error code', function () {
+    spyOn(console, 'log');
     // in edit mode if not null
     component.editingId = null;
     spyOn(service, 'addMember').and.returnValue(of(new HttpResponse({status: 200})));
     component.onSubmit();
     expect(service.addMember).toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalledWith('Unexpected non-error response code');
   });
 });

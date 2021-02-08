@@ -85,7 +85,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
             if (res.status === 200) {
               console.log('Member successfully edited');
             } else {
-              console.log('Member could not be edited');
+              console.log('Unexpected non-error response code');
             }
             this.gotoMembersPage();
           });
@@ -97,7 +97,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
             if (res.status === 201) {
               console.log('Member successfully added');
             } else {
-              console.log('Member could not be added');
+              console.log('Unexpected non-error response code');
             }
             this.gotoMembersPage();
           });
