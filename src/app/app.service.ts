@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {catchError, filter} from 'rxjs/operators';
+import {catchError, filter, map} from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Member} from './member-details/member-details.component';
@@ -18,13 +18,19 @@ export class AppService {
   getMembers() {
     return this.http
       .get(`${this.api}/members`)
-      .pipe(catchError(this.handleError));
+      .pipe(
+          catchError(this.handleError),
+          map((members: any[]) => members.filter(this.isMember))
+      );
   }
 
   getMemberById(id: number): Observable<Member> {
       return this.http
           .get(`${this.api}/members/${id}`)
-          .pipe(catchError(this.handleError));
+          .pipe(
+              catchError(this.handleError),
+              filter(this.isMember)
+          );
   }
 
   updateMember(id: number, member: Member): Observable<any> {
@@ -54,8 +60,16 @@ export class AppService {
         .get(`${this.api}/teams`)
         .pipe(
             catchError(this.handleError),
-            // TODO: filter for only the appropriate shape
+            map((teams: any[]) => teams.filter(team => this.isTeam(team)))
         );
+  }
+
+  private isMember(member: any) {
+    return member.firstName && member.lastName && member.jobTitle && member.team && member.status;
+  }
+
+  private isTeam(team: any): boolean {
+    return team.id && team.teamName;
   }
 
   private handleError(error: HttpErrorResponse) {

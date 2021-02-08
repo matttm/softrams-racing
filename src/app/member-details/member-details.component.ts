@@ -56,7 +56,6 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
       if (memberId) {
         this.editingId = memberId;
         this.appService.getMemberById(memberId).pipe(takeUntil(this.unsub$)).subscribe((member: Member) => {
-          console.log(`Member retrieved for edit: ${JSON.stringify(member)}`);
           const controls = this.memberForm.controls;
           controls['firstName'].setValue(member.firstName);
           controls['lastName'].setValue(member.lastName);
@@ -109,7 +108,8 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
     this.router.navigateByUrl('members')
         .then(() => {
           console.log('Navigating to members page');
-        });
+        })
+        .catch(console.log);
   }
 
   compareTeams(t1: any, t2: any): boolean {
