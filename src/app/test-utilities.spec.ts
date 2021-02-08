@@ -33,9 +33,18 @@ export function establishLocalStorageSpies() {
         .and.callFake(mockLocalStorage.clear);
 }
 
-export const mockAppService = {
-    getTeams: () => of( [] ),
-    getMembers: () => of( [] ),
-    deleteMember: () => of(),
-    getMemberById: (id) => of()
-};
+export function establishAppServiceSpies(service) {
+    spyOn(service, 'getTeams').and.returnValue(of([]));
+    // getMembers: () => of( [] ),
+    // deleteMember: () => of(),
+    // getMemberById: (id) => of()
+}
+
+export function establishActivatedRouteSpies(route, data) {
+    function wrap(_data) {
+        return of({
+            get: (key) => _data[key]
+        });
+    }
+    spyOn(route, 'queryParams').and.returnValue(wrap(data));
+}

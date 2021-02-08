@@ -6,7 +6,6 @@ import {Router, RouterModule} from '@angular/router';
 
 import {HttpClientModule} from '@angular/common/http';
 import {AppService} from '../app.service';
-import {mockAppService} from '../test-utilities.spec';
 import {of} from 'rxjs';
 
 const mockMembers = [
@@ -31,15 +30,12 @@ describe('MembersComponent', () => {
       declarations: [MembersComponent],
       imports: [HttpClientModule, RouterModule],
       providers: [
+        AppService,
         {
           provide: Router,
           useClass: class {
             navigateByUrl = jasmine.createSpy('navigate').and.returnValue(Promise.resolve());
           }
-        },
-        {
-          provide: AppService,
-          useValue: mockAppService
         }
       ]
     }).compileComponents();
