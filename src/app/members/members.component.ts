@@ -44,7 +44,6 @@ export class MembersComponent implements OnInit, OnDestroy {
 
   deleteMemberById(id: number) {
     this.appService.deleteMember(id).pipe(takeUntil(this.unsub$)).subscribe(() => {
-      console.log(`Deleted member with id: ${id}`);
       this.updateLocalMembers();
     });
   }
@@ -52,7 +51,6 @@ export class MembersComponent implements OnInit, OnDestroy {
   updateLocalMembers() {
     this.appService.getMembers().pipe(takeUntil(this.unsub$)).subscribe(members => {
       this.members = members;
-      console.log(`Updated members`);
     });
   }
 }

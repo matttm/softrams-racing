@@ -24,6 +24,7 @@ describe('MembersComponent', () => {
   let component: MembersComponent;
   let fixture: ComponentFixture<MembersComponent>;
   let service: AppService;
+  let router: Router;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -33,7 +34,7 @@ describe('MembersComponent', () => {
         {
           provide: Router,
           useClass: class {
-            navigate = jasmine.createSpy('navigate');
+            navigateByUrl = jasmine.createSpy('navigate').and.returnValue(Promise.resolve());
           }
         },
         {
@@ -43,6 +44,7 @@ describe('MembersComponent', () => {
       ]
     }).compileComponents();
     service = TestBed.get(AppService);
+    router = TestBed.get(Router);
     fixture = TestBed.createComponent(MembersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -75,6 +77,11 @@ describe('MembersComponent', () => {
     expect(component.goToAddMemberForm).toHaveBeenCalled();
   });
 
+  it('should invoke router\'s navigate during gotoMembersForm', () => {
+    component.goToAddMemberForm();
+    expect(router.navigateByUrl).toHaveBeenCalledWith('add-member');
+  });
+
   it('should invoke editMember on component on button click', (done) => {
     spyOn(service, 'getMembers').and.returnValue(of(mockMembers));
     spyOn(component, 'editMemberByID');
@@ -85,6 +92,12 @@ describe('MembersComponent', () => {
       expect(component.editMemberByID).toHaveBeenCalled();
       done();
     });
+  });
+
+  it('should invoke router\'s navigate with id during editMember', () => {
+    const id = 1;
+    component.editMemberByID(id);
+    expect(router.navigateByUrl).toHaveBeenCalledWith(`edit-member?id=${id}`);
   });
 
   it('should invoke deleteMember on service on button click', (done) => {
