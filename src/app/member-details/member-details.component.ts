@@ -26,7 +26,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
   submitted = false;
   alertType: String;
   alertMessage: String;
-  teams = [];
+  teams$: Observable<any>;
   unsub$: Subject<any>;
   // store id query param, so we only have to fetch it once
   editingId = null;
@@ -38,9 +38,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges, OnDestroy {
       private route: ActivatedRoute
   ) {
     this.unsub$ = new Subject<any>();
-    this.appService.getTeams().pipe(takeUntil(this.unsub$)).subscribe(teams => {
-      this.teams = teams;
-    });
+    this.teams$ = this.appService.getTeams();
     this.memberForm = this.fb.group({
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
