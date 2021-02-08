@@ -35,6 +35,50 @@ app.use(
   })
 );
 
+app.delete('/api/members/:id', (req, res) => {
+    const id = req.params.id;
+    if (!isWholeNumber(id)) {
+        res.status(400).send('id must be a whole number');
+    }
+    request.delete(`http://localhost:3000/members/${id}`, (err, response, body) => {
+        if (response.statusCode <= 500) {
+            res.status(200).send(body);
+        }
+    });
+});
+
+app.put('/api/members/:id', (req, res) => {
+    const id = req.params.id;
+    if (!isWholeNumber(id)) {
+        res.status(400).send('id must be a whole number');
+    }
+    const member = req.body;
+    if (isValidMember(member)) {
+        request.put({
+            url: `http://localhost:3000/members/${id}`,
+            json: member
+        }, (err, response, body) => {
+            if (response.statusCode <= 500) {
+                res.status(200).send(body);
+            }
+        });
+    } else {
+        res.status(400).send(`Object does not have all member fields`);
+    }
+});
+
+app.get('/api/members/:id', (req, res) => {
+    const id = req.params.id;
+    if (!isWholeNumber(id)) {
+        res.status(400).send('id must be a whole number');
+    }
+    request.get(`http://localhost:3000/members/${id}`, (err, response, body) => {
+        if (response.statusCode <= 500) {
+            res.status(200).send(body);
+        }
+    });
+});
+
 app.get('/api/members', (req, res) => {
   request('http://localhost:3000/members', (err, response, body) => {
     if (response.statusCode <= 500) {
@@ -43,14 +87,33 @@ app.get('/api/members', (req, res) => {
   });
 });
 
-// TODO: Dropdown!
 app.get('/api/teams', (req, res) => {
-
+    request.get('http://localhost:3000/teams', (err, response, body) => {
+        if (response.statusCode <= 500) {
+            res.status(200).send(body);
+        }
+    });
 });
 
 // Submit Form!
-app.post('/api/addMember', (req, res) => {
-
+// I switched this endpoint from 'addMember' to 'members', for
+// doing so follows a more RESTful practice of the 'members' resource
+app.post('/api/members', (req, res) => {
+    console.log(`POST to members was ${JSON.stringify(req.body)}`);
+    const member = req.body;
+    // Ensure the object has proper keys
+    if (isValidMember(member)) {
+        request.post({
+            url: 'http://localhost:3000/members',
+            json: member
+        }, (err, response, body) => {
+            if (response.statusCode <= 500) {
+                res.status(201).send(body);
+            }
+        });
+    } else {
+        res.status(400).send(`Object does not have all member fields`);
+    }
 });
 
 app.get('*', (req, res) => {
@@ -60,3 +123,11 @@ app.get('*', (req, res) => {
 app.listen('8000', () => {
   console.log('Vrrrum Vrrrum! Server starting!');
 });
+
+function isValidMember(m) {
+    return m.firstName && m.lastName && m.jobTitle && m.team && m.status;
+}
+
+function isWholeNumber(v) {
+    return v % 1 === 0;
+}

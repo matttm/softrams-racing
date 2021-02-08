@@ -9,6 +9,7 @@
         <th>Job Title</th>
         <th>Racing Team</th>
         <th>Status</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -19,6 +20,10 @@
         <td>{{member?.jobTitle}}</td>
         <td>{{member?.team}}</td>
         <td>{{member?.status}}</td>
+        <td>
+          <span id="editMemberButton" (click)="editMemberByID(member?.id)">Edit</span> | <!-- there is a space on each side of '!' -->
+          <span id="deleteMemberButton" (click)="deleteMemberById(member?.id)">Delete</span>
+        </td>
       </tr>
     </tbody>
   </table>
